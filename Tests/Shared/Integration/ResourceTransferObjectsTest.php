@@ -8,13 +8,40 @@ namespace Arrynn\MultilayeredInfrastructure\Tests\Shared\Integration;
 use Arrynn\MultilayeredInfrastructure\Mapper\Mapper;
 use Arrynn\MultilayeredInfrastructure\Tests\Mapper\TestClasses\TestCustomerModel;
 use Arrynn\MultilayeredInfrastructure\Tests\TransferObjects\TestClasses\TestAddressDto;
+use Arrynn\MultilayeredInfrastructure\Tests\TransferObjects\TestClasses\TestCustomerCollectionDto;
 use Arrynn\MultilayeredInfrastructure\Tests\TransferObjects\TestClasses\TestPhoneDto;
 use Arrynn\MultilayeredInfrastructure\Tests\TransferObjects\TestClasses\TestSimplifiedResourceCustomerDto;
 use Arrynn\MultilayeredInfrastructure\TransferObjects\DtoResolver;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 class ResourceTransferObjectsTest extends TestCase
 {
+
+    private $sampleArray = [
+        "full_name" => "Anthony Kipps",
+        "email" => "antho.kipps@mailprovider.io",
+        "address" => [
+            "street" => "Main rd.",
+            "street_number" => "102",
+            "zip" => "0124 44",
+            "city" => "Metropol",
+            "country" => "Longtavernland",
+        ],
+        "phones" => [
+            [
+                "country_code" => "299",
+                "number" => "949838272",
+            ],
+            [
+                "country_code" => "301",
+                "number" => "558448446",
+            ]
+        ],
+        "created_at" => "18. Feb 2018 13:59"
+    ];
+
 
     /**
      * @test
@@ -43,29 +70,7 @@ class ResourceTransferObjectsTest extends TestCase
      */
     public function resolver_resolvesDtoFromArray_successfully()
     {
-        $array = [
-            "full_name" => "Anthony Kipps",
-            "email" => "antho.kipps@mailprovider.io",
-            "address" => [
-                "street" => "Main rd.",
-                "street_number" => "102",
-                "zip" => "0124 44",
-                "city" => "Metropol",
-                "country" => "Longtavernland",
-            ],
-            "phones" => [
-                [
-                    "country_code" => "299",
-                    "number" => "949838272",
-                ],
-                [
-                    "country_code" => "301",
-                    "number" => "558448446",
-                ]
-            ],
-            "created_at" => "18. Feb 2018 13:59"
-        ];
-
+        $array = $this->sampleArray;
         /**
          * @var TestSimplifiedResourceCustomerDto $res
          */
@@ -87,6 +92,35 @@ class ResourceTransferObjectsTest extends TestCase
     public function resolverToArray_resolves_successfully(){
         $dto = $this->resolver_resolvesDtoFromArray_successfully();
 
+        $sampleArrayCheck = md5(json_encode($this->sampleArray));
+
         $array = DtoResolver::toArray($dto);
+        $arrayCheck = md5(json_encode($array));
+
+        self::assertEquals($sampleArrayCheck, $arrayCheck);
+    }
+
+    /**
+     * @test
+     */
+    public function resolverAndMapper_resolveAndMapFromPaginatorToCollectionDto_successfully()
+    {
+        $items = [
+            TestCustomerModel::sampleCustomer(),
+            TestCustomerModel::sampleCustomer(),
+            TestCustomerModel::sampleCustomer(),
+            TestCustomerModel::sampleCustomer(),
+        ];
+        $paginator = new LengthAwarePaginator($items, 4, 2);
+
+        $collectionDto = new TestCustomerCollectionDto($paginator);
+
+        $array = $collectionDto->toArray(null);
+        self::assertEquals(4, count($array));
+        foreach ($array as $item){
+            self::assertEquals($item['phones'][0]['country_code'], '299');
+        }
+
+
     }
 }

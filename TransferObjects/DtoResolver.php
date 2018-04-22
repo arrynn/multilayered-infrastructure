@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Arrynn\MultilayeredInfrastructure\TransferObjects;
-
 
 use Arrynn\MultilayeredInfrastructure\TransferObjects\Contracts\IResolvableDto;
 
@@ -36,11 +34,9 @@ class DtoResolver
         foreach ($array as $key => $item) {
             if (is_array($item)) {
                 $res [$key] = self::parseNested($item);
-            }
-            elseif ($item instanceof AResourceDto) {
+            } elseif ($item instanceof IResolvableDto) {
                 $res[$key] = self::toArray($item);
-            }
-            else{
+            } else {
                 $res[$key] = $item;
             }
         }
