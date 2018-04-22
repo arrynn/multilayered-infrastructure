@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace Arrynn\MultilayeredInfrastructure\Tests\TransferObjects\TestClasses;
 
 
+use Arrynn\MultilayeredInfrastructure\Mapper\Builder\MappingCollectionBuilder;
+use Arrynn\MultilayeredInfrastructure\Mapper\Contracts\IMappable;
+use Arrynn\MultilayeredInfrastructure\Mapper\Contracts\IMappingCollection;
+use Arrynn\MultilayeredInfrastructure\Tests\Mapper\TestClasses\TestAddressModel;
 use Arrynn\MultilayeredInfrastructure\TransferObjects\Contracts\IResolvableDto;
 use Arrynn\MultilayeredInfrastructure\TransferObjects\DtoAttributeCollection;
 use Arrynn\MultilayeredInfrastructure\TransferObjects\DtoAttributeCollectionBuilder;
@@ -18,7 +22,7 @@ use Arrynn\MultilayeredInfrastructure\TransferObjects\DtoAttributeCollectionBuil
  * @property string $city
  * @property string $country
  */
-class TestAddressDto implements IResolvableDto
+class TestAddressDto implements IResolvableDto, IMappable
 {
 
     static function getAttributeCollection(): DtoAttributeCollection
@@ -41,5 +45,19 @@ class TestAddressDto implements IResolvableDto
             'city' => 'Worlhinki',
             'country' => 'Asgard'
         ];
+    }
+
+    static function getMappingCollection(): IMappingCollection
+    {
+        /**
+         * mapping from @see TestAddressModel
+         */
+        return MappingCollectionBuilder::create()
+            ->addDirectMapping('street')
+            ->addDirectMapping('street_number')
+            ->addDirectMapping('zip')
+            ->addDirectMapping('city')
+            ->addDirectMapping('country')
+            ->build();
     }
 }

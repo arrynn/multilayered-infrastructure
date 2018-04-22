@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Arrynn\MultilayeredInfrastructure\TransferObjects;
 
 
+use Arrynn\MultilayeredInfrastructure\TransferObjects\Contracts\IResolvableDto;
+
 class DtoAttributeCollection
 {
 
@@ -27,5 +29,15 @@ class DtoAttributeCollection
     public function add(DtoAttribute $attr): void
     {
         $this->attributes[] = $attr;
+    }
+
+    public function getAssocAttributeArray(IResolvableDto $dto)
+    {
+        $array = [];
+        foreach ($this->attributes as $attribute) {
+            $attrName = $attribute->getName();
+            $array[$attrName] = $dto->$attrName;
+        }
+        return $array;
     }
 }

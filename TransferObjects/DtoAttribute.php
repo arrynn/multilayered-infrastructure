@@ -52,6 +52,4 @@ class DtoAttribute
     {
         return new $this->class();
     }
-
-
 }

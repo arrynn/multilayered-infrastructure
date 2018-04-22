@@ -9,6 +9,7 @@ use Arrynn\MultilayeredInfrastructure\Mapper\Exceptions\MappingException;
 use Arrynn\MultilayeredInfrastructure\Mapper\Mapper;
 use Arrynn\MultilayeredInfrastructure\Mapper\Mapping;
 use Arrynn\MultilayeredInfrastructure\Mapper\MappingCollection;
+use Closure;
 use Throwable;
 
 class MappingCollectionBuilder
@@ -62,8 +63,20 @@ class MappingCollectionBuilder
         }
         $closure = function ($source, $target) use ($sourceAttr, $destinationAttr, $destObj) {
             try {
-                $mappedObj = Mapper::map($source->$sourceAttr, $destObj);
-                $target->$destinationAttr = $mappedObj;
+                if(is_array($source->$sourceAttr)){
+                    // map all items of array to destObj
+                    $array = [];
+                    foreach($source->$sourceAttr as $sourceObj){
+                        $mappedObj = Mapper::map($sourceObj, new $destObj());
+                        $array[] = $mappedObj;
+                    }
+                    $target->$destinationAttr = $array;
+
+                } else {
+                    // only one destObj here
+                    $mappedObj = Mapper::map($source->$sourceAttr, $destObj);
+                    $target->$destinationAttr = $mappedObj;
+                }
             } catch (Throwable $e) {
                 throw new MappingException("There was an error during mapping of attribute '$sourceAttr'"
                     . "in IMappable class " . get_class($source) . "\n" . $e->getMessage(), 0, $e);
@@ -74,6 +87,13 @@ class MappingCollectionBuilder
         return $this;
     }
 
+    public function addCustomMapping(Closure $closure)
+    {
+        $mapping = new Mapping();
+        $mapping->setClosure($closure);
+        $this->collection->add($mapping);
+        return $this;
+    }
 
     public function build(): MappingCollection
     {

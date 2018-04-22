@@ -24,7 +24,30 @@ class DtoResolver
         return $dto;
     }
 
-    private static function findByKey($array, $name)
+    public static function toArray(IResolvableDto $dto): array
+    {
+        $array = $dto::getAttributeCollection()->getAssocAttributeArray($dto);
+        return self::parseNested($array);
+    }
+
+    private static function parseNested(array $array): array
+    {
+        $res = [];
+        foreach ($array as $key => $item) {
+            if (is_array($item)) {
+                $res [$key] = self::parseNested($item);
+            }
+            elseif ($item instanceof AResourceDto) {
+                $res[$key] = self::toArray($item);
+            }
+            else{
+                $res[$key] = $item;
+            }
+        }
+        return $res;
+    }
+
+    private static function findByKey(array $array, string $name)
     {
         if (array_key_exists($name, $array)) {
             return ($array[$name]);
