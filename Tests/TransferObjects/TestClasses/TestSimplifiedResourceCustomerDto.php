@@ -62,7 +62,7 @@ class TestSimplifiedResourceCustomerDto implements IMappable, IResolvableDto
              */
             $date = $source->$attrName;
             $target->$attrName = Carbon::createFromFormat('Y-m-d H:i:s', $date, 'UTC')
-                ->timezone(config('app.output_timezone'))
+                ->timezone('UTC')
                 ->format('d. M Y H:i');
         };
     }

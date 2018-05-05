@@ -36,7 +36,11 @@ class DtoAttributeCollection
         $array = [];
         foreach ($this->attributes as $attribute) {
             $attrName = $attribute->getName();
-            $array[$attrName] = $dto->$attrName;
+            if (isset($dto->$attrName)) {
+                $array[$attrName] = $dto->$attrName;
+            } else{
+                $array[$attrName] = null;
+            }
         }
         return $array;
     }

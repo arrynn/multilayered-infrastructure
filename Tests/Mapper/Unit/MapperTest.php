@@ -82,16 +82,19 @@ class MapperTest extends TestCase
     }
 
     /**
+     * @deprecated MappingCollectionBuilder now ignores non-existing attributes therefore no exception is thrown
      * @test
      * @expectedException Arrynn\MultilayeredInfrastructure\Mapper\Exceptions\MappingException
      */
+    /*
     public function mapping_withBadMapping_inSourceClass_throwsMappingException()
     {
         $source = FourthTestClass::createEmpty();
         $target = FirstTestClass::createWithEachAttrDifferent("Foo");
 
-        Mapper::map($source, $target);
+        $res = Mapper::map($source, $target);
     }
+    */
 
     /**
      * @test

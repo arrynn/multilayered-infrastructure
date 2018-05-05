@@ -45,7 +45,7 @@ class TestCustomerModel extends Model
         $phone2->number = '558448446';
         $model->phones[] = $phone1;
         $model->phones[] = $phone2;
-        $model->created_at = Carbon::create(2018, 2, 18, 13, 59, 23);
+        $model->created_at = Carbon::create(2018, 2, 18, 13, 59, 23)->timezone('UTC');
 
         return $model;
     }

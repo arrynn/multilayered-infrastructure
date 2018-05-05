@@ -6,5 +6,5 @@ namespace Arrynn\MultilayeredInfrastructure\Models\Contracts;
 
 interface ITranslates
 {
-
+    public function getTranslatedAttributes();
 }

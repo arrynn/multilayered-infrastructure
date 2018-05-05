@@ -36,7 +36,9 @@ class MappingCollectionBuilder
         $mapping = new Mapping();
         $closure = function ($source, $target) use ($sourceAttr, $destinationAttr) {
             try {
-                $target->$destinationAttr = $source->$sourceAttr;
+                if(isset($source->$sourceAttr)) {
+                    $target->$destinationAttr = $source->$sourceAttr;
+                }
             } catch (Throwable $e) {
                 throw new MappingException("There was an error during mapping of attribute '$sourceAttr'"
                     . "in IMappable class " . get_class($source) . "\n" . $e->getMessage(), 0, $e);
