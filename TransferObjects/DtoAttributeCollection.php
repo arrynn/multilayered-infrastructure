@@ -7,6 +7,12 @@ namespace Arrynn\MultilayeredInfrastructure\TransferObjects;
 
 use Arrynn\MultilayeredInfrastructure\TransferObjects\Contracts\IResolvableDto;
 
+/**
+ * Class DtoAttributeCollection
+ * @package Arrynn\MultilayeredInfrastructure\TransferObjects
+ *
+ * @see DtoAttributeCollectionBuilder for usage
+ */
 class DtoAttributeCollection
 {
 
